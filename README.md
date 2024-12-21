@@ -1,27 +1,25 @@
-# Didomi code challlenge
+# Didomi code challenge
 
-## Requirements for running the project
+## Starting it up
 
-> [!NOTE]
-> If you have NVM installed, use `nvm use` in this directory to automatically switch to the correct Node version
-
-- `Node v22.12.0`
-- `NPM >=11.0.0`
-
-## Starting the app
-
-To start the node server use the command below.
+To start everything up using Docker, ensure you have Docker installed on your machine and run:
 
 ```sh
-npm run start
+# Start everything up
+./scripts/start.sh
+
+# Clean and remove docker containers
+./scripts/cleanup.sh
 ```
 
-There's also other commands available.
+Then everything should be ready:
+- `localhost:8080` | The API
+- `localhost:5433` | The database
 
-```sh
-# Build the app
-npm run build
+## File structure
 
-# Format all code in the project
-npm run format
-```
+The file structure is based on some practices I worked out both working comercially and doing my own projects. The key ideas behind this setup:
+
+- everything is startable via one single command, given Docker is available
+- Docker setup can be re-configured for dev/staging/prod environments as needed
+- Docker setup is technology agnostic, containers are added or removed in the same way at all times

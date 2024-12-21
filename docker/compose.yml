@@ -1,0 +1,27 @@
+name: didomi
+services:
+  node:
+    build:
+      context: ../
+      dockerfile: docker/node/Dockerfile
+    container_name: didomi-node
+    volumes:
+      - ../node:/home/node/app
+    ports:
+      - 8080:8080
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    container_name: didomi-db
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:?}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?}
+      POSTGRES_DB: ${DB_NAME:?}
+    healthcheck:
+      test: "pg_isready --username=admin --dbname=didomi"
+      timeout: 10s
+      retries: 20
+    ports:
+      - 5433:5432
