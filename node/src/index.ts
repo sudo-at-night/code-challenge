@@ -1,10 +1,9 @@
 import fastify from 'fastify'
+import { api } from '@src/api'
 
 const server = fastify()
 
-server.get('/ping', async (request, reply) => {
-  return 'pong\n'
-})
+server.register(api)
 
 server.listen({ host: '0.0.0.0', port: 8080 }, (err, address) => {
   if (err) {
