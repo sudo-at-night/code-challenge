@@ -1,10 +1,10 @@
-name: didomi
+name: code-challenge
 services:
   node:
     build:
       context: ../
       dockerfile: docker/node/Dockerfile
-    container_name: didomi-node
+    container_name: code-challenge-node
     volumes:
       - ../node:/home/node/app
     ports:
@@ -15,14 +15,14 @@ services:
       db:
         condition: service_healthy
   db:
-    container_name: didomi-db
+    container_name: code-challenge-db
     image: postgres:17-alpine
     environment:
       POSTGRES_USER: ${DB_USERNAME:?}
       POSTGRES_PASSWORD: ${DB_PASSWORD:?}
       POSTGRES_DB: ${DB_NAME:?}
     healthcheck:
-      test: "pg_isready --username=admin --dbname=didomi"
+      test: "pg_isready --username=admin --dbname=code-challenge"
       timeout: 10s
       retries: 20
     ports:

@@ -1,4 +1,4 @@
-# Didomi code challenge
+# Code challenge
 
 ## Starting it up
 
@@ -12,13 +12,13 @@ To start everything up using Docker, ensure you have Docker installed on your ma
 ./scripts/cleanup.sh
 
 # To execute commands on the Node container
-docker exec -it didomi-node sh
+docker exec -it code-challenge-node sh
 
 # To execute commands on the Postgres container
-docker exec -it didomi-db sh
+docker exec -it code-challenge-db sh
 
 # Connect to Postgres database using psql or other client
-psql -h localhost -p 5433 -U admin -d didomi
+psql -h localhost -p 5433 -U admin -d code-challenge
 ```
 
 Then everything should be ready:
