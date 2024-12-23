@@ -9,6 +9,8 @@ services:
       - ../node:/home/node/app
     ports:
       - 8080:8080
+    environment:
+      DB_CONNECTION_STRING: postgresql://${DB_USERNAME}:${DB_PASSWORD}@db/${DB_NAME}
     depends_on:
       db:
         condition: service_healthy

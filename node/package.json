@@ -9,15 +9,21 @@
     "build": "tsc -p tsconfig.json",
     "start": "pm2-dev start pm2.config.js",
     "format": "prettier . --write",
-    "test": "vitest"
+    "test": "vitest",
+    "migrations:make": "knex migrate:make --cwd src/database",
+    "migrations:migrate": "knex migrate:latest --cwd src/database",
+    "migrations:rollback": "knex migrate:rollback --cwd src/database"
   },
   "dependencies": {
-    "fastify": "^5.2.0"
+    "fastify": "^5.2.0",
+    "knex": "^3.1.0",
+    "pg": "^8.13.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "pm2": "^5.4.3",
     "prettier": "^3.4.2",
+    "ts-node": "^10.9.2",
     "ts-patch": "^3.3.0",
     "typescript": "^5.7.2",
     "typescript-transform-paths": "^3.5.3",

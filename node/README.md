@@ -27,4 +27,13 @@ npm run format
 
 # Run tests using Vitest
 npm run test
+
+# Create a new migration file
+npm run migrations:make -- name_of_migration
+
+# Run all already defined migrations
+npm run migrations:migrate
+
+# Rollback migrations
+npm run migrations:rollback
 ```
