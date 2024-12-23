@@ -82,7 +82,7 @@ describe('events', () => {
           user_id: user.id,
           type: 'consent',
           data: {
-            consentId: 'sms_notifications',
+            consentId: 'sms_notificationss',
             enabled: true,
           },
         }),
@@ -96,7 +96,7 @@ describe('events', () => {
           enabled: false,
         },
         {
-          id: 'sms_notifications',
+          id: 'sms_notificationss',
           enabled: true,
         },
       ])

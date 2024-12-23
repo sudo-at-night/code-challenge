@@ -54,7 +54,7 @@ describe('/events', async () => {
     })
 
     describe('event type: consent', () => {
-      test.only('registers a consent event', async () => {
+      test('registers a consent event', async () => {
         const [user] = await trx(TABLE_USERS)
           .insert({ email: 'test@mail.com' })
           .returning('*')
@@ -115,7 +115,7 @@ describe('/events', async () => {
             userId: user.id,
             data: {
               type: 'consent',
-              consent: 'email_notifications',
+              consentId: 'email_notificatioxn',
               enabled: true,
             },
           },
