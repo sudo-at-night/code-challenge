@@ -8,16 +8,15 @@ import {
   registerEvent,
   validateEvent,
 } from '@src/services/events/events'
-import { getUserById } from '@src/services/users/users'
+import { getConsentsByUserId, getUserById } from '@src/services/users/users'
 import { EventInitializer } from '@src/database/data/events/events'
 
 export const eventsRouter: FastifyPluginCallback = (usersRoute, _, done) => {
   const postSchema = {
     type: 'object',
-    required: ['userId', 'tzOffset', 'data'],
+    required: ['userId', 'data'],
     properties: {
       userId: { type: 'integer' },
-      tzOffset: { type: 'integer' },
       data: {
         type: 'object',
         required: ['type'],
@@ -57,7 +56,7 @@ export const eventsRouter: FastifyPluginCallback = (usersRoute, _, done) => {
 
       await registerEvent(body as unknown as EventInitializer)
 
-      res.code(201).send()
+      res.code(201).send(await getConsentsByUserId(body.userId))
     }
   )
 

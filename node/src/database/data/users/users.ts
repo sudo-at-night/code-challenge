@@ -19,7 +19,7 @@ export const getUserByEmail = async (email: string) =>
   pg(TABLE_USERS).select('*').where({ email }).first()
 
 export const createUser = async (userInitializer: UserInitializer) =>
-  pg(TABLE_USERS).insert(userInitializer)
+  pg(TABLE_USERS).insert(userInitializer).returning('*')
 
 export const removeUser = async (id: number) =>
   pg(TABLE_USERS).delete().where({ id })

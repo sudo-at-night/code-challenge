@@ -6,14 +6,33 @@ export const TABLE_EVENTS = 'events'
 
 export type EventInitializer = {
   userId: string
-  tzOffset: number
   data: any
 }
 
 export const createEvent = (eventInitializer: EventInitializer) =>
   pg(TABLE_EVENTS).insert({
     user_id: eventInitializer.userId,
-    created_at_tz_offset: eventInitializer.tzOffset,
     type: eventInitializer.data.type,
     data: _.omit(eventInitializer.data, 'type'),
   })
+
+export const getLatestConsentEventsByUserId = async (userId: number) => {
+  const consentEvents = await pg.raw(`
+    WITH consents as (SELECT
+      (data ->> 'consentId') as id,
+      (data ->> 'enabled')::boolean as enabled,
+      created_at
+    FROM ${TABLE_EVENTS}
+    WHERE
+      type = 'consent'
+    ORDER BY created_at DESC)
+
+    SELECT
+      DISTINCT ON (id)
+      id,
+      enabled
+    FROM consents
+  `)
+
+  return consentEvents.rows
+}

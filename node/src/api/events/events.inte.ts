@@ -42,7 +42,6 @@ describe('/events', async () => {
         url: '/events',
         body: {
           userId: user.id,
-          tzOffset: 60,
           data: {
             type: 'borscht',
             consentId: 'email_notifications',
@@ -65,7 +64,6 @@ describe('/events', async () => {
           url: '/events',
           body: {
             userId: user.id,
-            tzOffset: 60,
             data: {
               type: 'consent',
               consentId: 'email_notifications',
@@ -94,7 +92,6 @@ describe('/events', async () => {
           url: '/events',
           body: {
             userId: 100,
-            tzOffset: 60,
             data: {
               type: 'consent',
               consentId: 'email_notifications',
@@ -116,7 +113,6 @@ describe('/events', async () => {
           url: '/events',
           body: {
             userId: user.id,
-            tzOffset: 60,
             data: {
               type: 'consent',
               consent: 'email_notifications',

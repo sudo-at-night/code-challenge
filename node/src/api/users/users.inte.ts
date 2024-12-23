@@ -32,19 +32,6 @@ describe('/users', async () => {
   })
 
   describe('GET', () => {
-    test('can list all users', async () => {
-      await Promise.all([
-        trx(TABLE_USERS).insert({ email: 'test@mail.com' }),
-        trx(TABLE_USERS).insert({ email: 'test2@mail.com' }),
-        trx(TABLE_USERS).insert({ email: 'test3@mail.com' }),
-      ])
-
-      const response = await server.inject({ method: 'GET', url: '/users' })
-
-      expect(response.statusCode).toEqual(200)
-      expect(JSON.parse(response.body)).toHaveLength(3)
-    })
-
     test('can list a single user', async () => {
       const [[user]] = await Promise.all([
         trx(TABLE_USERS).insert({ email: 'test@mail.com' }).returning('*'),
@@ -58,7 +45,12 @@ describe('/users', async () => {
       })
 
       expect(response.statusCode).toEqual(200)
-      expect(JSON.parse(response.body).email).toEqual('test@mail.com')
+      expect(JSON.parse(response.body)).toEqual({
+        user: {
+          id: user.id,
+        },
+        consents: [],
+      })
     })
 
     test('returns 404 if non-existing user ID is given', async () => {
@@ -72,22 +64,30 @@ describe('/users', async () => {
   })
 
   describe('POST', () => {
-    test('can create users', async () => {
-      const EMAIL = 'test@mail.com'
+    test.each(['test@mail.com', 'test@mail.comcom', 'test@mail.io'])(
+      'can create users with a valid email (%s)',
+      async (validEmail) => {
+        const response = await server.inject({
+          method: 'POST',
+          url: `/users`,
+          body: {
+            email: validEmail,
+          },
+        })
 
-      const response = await server.inject({
-        method: 'POST',
-        url: `/users`,
-        body: {
-          email: EMAIL,
-        },
-      })
+        const dbUsers = await trx(TABLE_USERS).select('*')
 
-      const users = await trx(TABLE_USERS).select('*')
-
-      expect(users).toHaveLength(1)
-      expect(users[0].email).toEqual(EMAIL)
-    })
+        expect(dbUsers).toHaveLength(1)
+        expect(dbUsers[0].email).toEqual(validEmail)
+        expect(response.statusCode).toEqual(201)
+        expect(JSON.parse(response.body)).toEqual({
+          user: {
+            id: dbUsers[0].id,
+          },
+          consents: [],
+        })
+      }
+    )
 
     test('cannot create multiple users with the same e-mail', async () => {
       const EMAIL = 'test@mail.com'
@@ -104,6 +104,21 @@ describe('/users', async () => {
 
       expect(response.statusCode).toEqual(422)
     })
+
+    test.each(['test.mail.com', 'test@mail.'])(
+      'cannot create user with incorrect e-mail (%s)',
+      async (incorrectEmail) => {
+        const response = await server.inject({
+          method: 'POST',
+          url: `/users`,
+          body: {
+            email: incorrectEmail,
+          },
+        })
+
+        expect(response.statusCode).toEqual(422)
+      }
+    )
   })
 
   describe('DELETE', () => {

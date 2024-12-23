@@ -7,13 +7,10 @@ import {
   getUserByEmail,
   createUser,
   removeUser,
+  getConsentsByUserId,
 } from '@src/services/users/users'
 
 export const usersRouter: FastifyPluginCallback = (usersRoute, _, done) => {
-  usersRoute.get('/users', async (_, res) => {
-    res.code(200).send(await getAllUsers())
-  })
-
   const getSchema = {
     type: 'object',
     required: ['userId'],
@@ -30,10 +27,10 @@ export const usersRouter: FastifyPluginCallback = (usersRoute, _, done) => {
       },
     },
     async (req, res) => {
-      const user = await getUserById(req.params.userId)
+      const userWithConsents = await getConsentsByUserId(req.params.userId)
 
-      if (user) {
-        return res.code(200).send(user)
+      if (userWithConsents) {
+        return res.code(200).send(userWithConsents)
       }
 
       res.code(404)
@@ -61,7 +58,9 @@ export const usersRouter: FastifyPluginCallback = (usersRoute, _, done) => {
         return res.code(422).send()
       }
 
-      res.code(201).send(await createUser({ email }))
+      const [user] = await createUser({ email })
+
+      res.code(201).send(await getConsentsByUserId(user.id))
     }
   )
 

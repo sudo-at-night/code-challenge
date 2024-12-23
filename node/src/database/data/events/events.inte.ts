@@ -30,10 +30,10 @@ describe('events', () => {
 
       const newEvent = {
         userId: user.id,
-        tzOffset: 20,
         data: {
           type: 'consent',
-          dataPoint: 10,
+          consentId: 'email_notifications',
+          enabled: true,
         },
       }
 
@@ -46,10 +46,60 @@ describe('events', () => {
         user_id: user.id,
         type: newEvent.data.type,
         data: {
-          dataPoint: 10,
+          consentId: newEvent.data.consentId,
+          enabled: newEvent.data.enabled,
         },
-        created_at_tz_offset: newEvent.tzOffset,
       })
+    })
+  })
+
+  describe('getLatestConsentEventsByUserId', () => {
+    test('returns latest consents without duplicates', async () => {
+      const [user] = await trx(TABLE_USERS)
+        .insert({ email: 'test@mail.com' })
+        .returning('*')
+      await Promise.all([
+        trx(TABLE_EVENTS).insert({
+          created_at: new Date('2024-05-01'),
+          user_id: user.id,
+          type: 'consent',
+          data: {
+            consentId: 'email_notifications',
+            enabled: true,
+          },
+        }),
+        trx(TABLE_EVENTS).insert({
+          created_at: new Date('2024-05-02'),
+          user_id: user.id,
+          type: 'consent',
+          data: {
+            consentId: 'email_notifications',
+            enabled: false,
+          },
+        }),
+        trx(TABLE_EVENTS).insert({
+          created_at: new Date('2024-05-03'),
+          user_id: user.id,
+          type: 'consent',
+          data: {
+            consentId: 'sms_notifications',
+            enabled: true,
+          },
+        }),
+      ])
+
+      const consents = await eventsData.getLatestConsentEventsByUserId(user.id)
+
+      expect(consents).toEqual([
+        {
+          id: 'email_notifications',
+          enabled: false,
+        },
+        {
+          id: 'sms_notifications',
+          enabled: true,
+        },
+      ])
     })
   })
 })

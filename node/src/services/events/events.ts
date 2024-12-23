@@ -2,6 +2,8 @@
 
 import { createEvent } from '@src/database/data/events/events'
 
+export const registerEvent = createEvent
+
 // but I'd rather not complicate the code that much here.
 export const EVENT_TYPES = ['consent'] as const
 
@@ -37,5 +39,3 @@ export const validateEvent = (event: EVENT_DATA) => {
     validateConsentEvent(event)
   }
 }
-
-export const registerEvent = createEvent
